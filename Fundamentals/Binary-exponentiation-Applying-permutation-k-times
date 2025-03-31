@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> applyPermutation(vector<int> sequence, vector<int> permutation) {
+    vector<int> newSequence(sequence.size());
+    for (int i = 0; i < sequence.size(); i++) {
+        newSequence[i] = sequence[permutation[i]];
+    }
+    return newSequence;
+}
+
+vector<int> permute(vector<int> sequence, vector<int> permutation, long long k) {
+    while (k > 0) {
+        if (k & 1) {
+            sequence = applyPermutation(sequence, permutation);
+        }
+        permutation = applyPermutation(permutation, permutation);
+        k >>= 1;
+    }
+    return sequence;
+}
+
+int main() {
+    int n;
+    long long k;
+    cin >> n >> k;
+    
+    vector<int> sequence(n);
+    vector<int> permutation(n);
+    
+    for (int i = 0; i < n; i++) {
+        cin >> sequence[i];
+    }
+    
+    for (int i = 0; i < n; i++) {
+        cin >> permutation[i];
+    }
+    
+    vector<int> result = permute(sequence, permutation, k);
+    
+    for (int i = 0; i < n; i++) {
+        cout << result[i] << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}
+
+// iput : 
+5 3
+10 20 30 40 50
+1 2 3 4 0
+
+output : 
+40 50 10 20 30 
