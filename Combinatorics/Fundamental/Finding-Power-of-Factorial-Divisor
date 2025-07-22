@@ -1,0 +1,71 @@
+Finding Power of Factorial Divisor
+------>  you are given two number n and k. find the largest power of k, x such that n! is divisible by k^x
+ Case 1 - Prime k
+ formula know as Legendre's 
+  T.C = log(n) base k
+Code - 
+int fact_pow (int n, int k) {
+    int res = 0;
+    while (n) {
+        n /= k;
+        res += n;
+    }
+    return res;
+}
+
+Case 2-  Composite k
+Approach - find prime factor and repaet code case 1
+
+Code - 
+#include <iostream>
+#include <map>
+#include <cmath>
+
+using namespace std;
+
+// Function to count how many times prime p appears in n!
+int countInFactorial(int n, int p) {
+    int count = 0;
+    while (n > 0) {
+        n /= p;
+        count += n;
+    }
+    return count;
+}
+
+// Function to compute maximum x such that k^x divides n!
+int fact_pow(int n, int k) {
+    map<int, int> prime_factors;
+
+    // Prime factorization of k
+    for (int i = 2; i * i <= k; ++i) {
+        while (k % i == 0) {
+            prime_factors[i]++;
+            k /= i;
+        }
+    }
+    if (k > 1) {
+        prime_factors[k]++;
+    }
+
+    int result = INT_MAX;
+
+    // For each prime factor, calculate its count in n! and update result
+    for (auto [prime, power] : prime_factors) {
+        int count = countInFactorial(n, prime);
+        result = min(result, count / power);
+    }
+
+    return result;
+}
+
+int main() {
+    int n, k;
+    cout << "Enter n and k: ";
+    cin >> n >> k;
+
+    int result = fact_pow(n, k);
+    cout << "Result: " << result << endl;
+
+    return 0;
+}
