@@ -1,0 +1,5 @@
+# Euclidean algorithm for computing the greatest common divisor
+# TC - O(logmin(a,b))
+int gcd (int a, int b) {
+    return b ? gcd (b, a % b) : a;
+}
