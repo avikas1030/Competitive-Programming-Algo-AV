@@ -1,0 +1,118 @@
+# This recursive function not only returns the gcd(a, b), but also computes coefficients x and y such that: 𝑎𝑥+𝑏𝑦=gcd⁡(𝑎,𝑏)
+# Application - Applications:
+ 1. Finding modular inverse (e.g., in cryptography)
+2. Solving Diophantine equations
+3. Important in number theory and RSA algorithm
+
+# code - 
+#include <iostream>
+using namespace std;
+
+int gcd(int a, int b, int& x, int& y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+
+    int x1, y1;
+    int d = gcd(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - y1 * (a / b);
+    return d;
+}
+
+int main() {
+    int a, b;
+    cout << "Enter a and b: ";
+    cin >> a >> b;
+
+    int x, y;
+    int g = gcd(a, b, x, y);
+
+    cout << "GCD: " << g << endl;
+    cout << "Coefficients x and y: " << x << ", " << y << endl;
+    cout << "Verification: " << a << "*" << x << " + " << b << "*" << y << " = " << (a*x + b*y) << endl;
+
+    return 0;
+}
+
+# problem  gift Dilema 
+You all know Dr. Sheldon Cooper. Everything Sheldon gets, he must give back the same. He doesn’t
+want to be in someone’s debt.
+Another friend of Sheldon, Penny has given him a very precious gift for his birthday. What penny
+didn’t know, now Sheldon is going over his head to find out some gifts that will exactly match the price
+of Penny’s gift. So my first task was to find out the price of the gift. With my super powerful sixth
+sense I found out that the price was P.
+Now comes the hardest part. Sheldon needs to buy a gift which will cost exactly P. He went
+to the nearby shop for this. It is a crazy shop. Because it sells only three types of things: Rubik’s
+cubes, mouth organs and chocolates. The prices of them are A, B, C accordingly. Now Sheldon faces
+a dilemma. What to buy and how many to buy? Because it turns out he can buy things costing P in
+various ways. For example if, A = 202, B = 203, C = 200 and P = 606, then are two different way
+to buy gifts costing exactly P. The first way is buying no Rubik’s cubes, two mouth organs and one
+chocolate. The second way is buying three Rubik’s cubes, no mouth organs and no chocolates.
+Now Sheldon is asking for your help (because I am retired from contests). Given A, B, C and P,
+you need to find out in how many ways he can buy gifts costing exactly P.
+Input
+The first line will contain T (T ≤ 100), the number of test cases. Next T lines each will have four
+integers, A, B, C and P (0 < A, B, C, P ≤ 100000000) and C/ gcd(A, B, C) ≥ 200, where gcd(A, B, C)
+means the greatest common divisor of A, B and C.
+Output
+For each case print ‘Case C: W’ (without the quotes), where C is the case number and W is the
+number of ways Sheldon can buy gifts.
+Sample Input
+1
+202 203 200 606
+Sample Output
+Case 1: 2
+
+# code 
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+ll gcd_extended(ll a, ll b, ll &x, ll &y) {
+    if (b == 0) {
+        x = 1; y = 0;
+        return a;
+    }
+    ll x1, y1;
+    ll d = gcd_extended(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - y1 * (a / b);
+    return d;
+}
+
+ll count_solutions(ll a, ll b, ll c) {
+    ll x, y;
+    ll d = gcd_extended(a, b, x, y);
+    if (c % d != 0) return 0;
+
+    x *= c / d;
+    y *= c / d;
+
+    // General solution: x = x + (b/d)*t, y = y - (a/d)*t
+    ll k1 = ceil(-1.0 * x * d / b);
+    ll k2 = floor(1.0 * y * d / a);
+
+    if (k1 > k2) return 0;
+    return k2 - k1 + 1;
+}
+
+int main() {
+    int T;
+    cin >> T;
+    for (int t = 1; t <= T; ++t) {
+        ll A, B, C, P;
+        cin >> A >> B >> C >> P;
+
+        ll ways = 0;
+        for (ll z = 0; z * C <= P; ++z) {
+            ll remaining = P - z * C;
+            ways += count_solutions(A, B, remaining);
+        }
+
+        cout << "Case " << t << ": " << ways << '\n';
+    }
+    return 0;
+}
