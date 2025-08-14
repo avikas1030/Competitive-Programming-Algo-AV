@@ -1,0 +1,106 @@
+Although the running time of O(n) is better than  
+O(n log log n)  of the classic sieve of Eratosthenes, the difference between them is not so big. 
+In practice the linear sieve runs about as fast as a typical implementation of the sieve of Eratosthenes.
+
+# code - 
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int N;
+    cin>>N;
+    vector<int> lp(N + 1, 0); // lowest prime factor
+    vector<int> pr;           // list of primes
+
+    for (int i = 2; i <= N; ++i) {
+        if (lp[i] == 0) { // i is prime
+            lp[i] = i;
+            pr.push_back(i);
+        }
+
+        // Inner loop: mark multiples
+        for (int j = 0; i * pr[j] <= N; ++j) {
+            lp[i * pr[j]] = pr[j]; // mark lowest prime factor
+
+            // Stop marking if prime divides i
+            if (pr[j] == lp[i]) {
+                break;
+            }
+        }
+    }
+
+    // Output primes
+    cout << "Primes up to " << N << ": ";
+    for (int p : pr) cout << p << " ";
+    cout << "\n";
+
+    // Output lowest prime factors
+    cout << "Lowest prime factors:\n";
+    for (int i = 2; i <= N; i++) {
+        cout << i << " -> " << lp[i] << "\n";
+    }
+
+    return 0;
+}
+
+# Knowing the factorizations of all numbers is very useful for some tasks, and this algorithm is one of the few which allow to find them in linear time.
+# code - 
+
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 21; // we keep it small for demonstration
+vector<int> lp(N + 1, 0); // lowest prime factor
+vector<int> pr;           // list of primes
+
+void linearSieve() {
+    for (int i = 2; i <= N; ++i) {
+        if (lp[i] == 0) {          // i is prime
+            lp[i] = i;
+            pr.push_back(i);
+        }
+        for (int j = 0; j < (int)pr.size() && i * pr[j] <= N; ++j) {
+            lp[i * pr[j]] = pr[j]; // set lowest prime factor
+            if (pr[j] == lp[i])    // stop if p divides i
+                break;
+        }
+    }
+}
+
+vector<int> factorize(int x) {
+    vector<int> factors;
+    while (x > 1) {
+        factors.push_back(lp[x]);
+        x /= lp[x];
+    }
+    return factors;
+}
+
+int main() {
+    linearSieve();
+
+    cout << "Lowest prime factors (lp array):\n";
+    for (int i = 2; i <= N; ++i) {
+        cout << i << " -> " << lp[i] << "\n";
+    }
+
+    cout << "\nPrime list:\n";
+    for (int p : pr) cout << p << " ";
+    cout << "\n\nFactorization examples:\n";
+
+    for (int num : {6, 15, 21}) {
+        cout << num << " = ";
+        auto factors = factorize(num);
+        for (int i = 0; i < (int)factors.size(); ++i) {
+            cout << factors[i];
+            if (i + 1 < (int)factors.size()) cout << " * ";
+        }
+        cout << "\n";
+    }
+}
+
+# output will all prime factor of nmuber 
+6 = 2x3
+15 = 3x5
+21 = 3x7
+16 = 2x2x2x2
