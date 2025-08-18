@@ -1,0 +1,82 @@
+# code - 
+#include <bits/stdc++.h>
+using namespace std;
+using u128 = __uint128_t; // For safe 128-bit multiplication
+
+// Modular multiplication (handles overflow safely)
+uint64_t mulmod(uint64_t a, uint64_t b, uint64_t mod) {
+    return (u128)a * b % mod;
+}
+
+// Modular exponentiation
+uint64_t power(uint64_t base, uint64_t exp, uint64_t mod) {
+    uint64_t result = 1;
+    while (exp > 0) {
+        if (exp & 1) result = mulmod(result, base, mod);
+        base = mulmod(base, base, mod);
+        exp >>= 1;
+    }
+    return result;
+}
+
+// Miller-Rabin primality test
+bool millerTest(uint64_t d, uint64_t n, uint64_t a) {
+    uint64_t x = power(a, d, n);
+    if (x == 1 || x == n - 1)
+        return true;
+
+    while (d != n - 1) {
+        x = mulmod(x, x, n);
+        d *= 2;
+
+        if (x == 1) return false;
+        if (x == n - 1) return true;
+    }
+    return false;
+}
+
+// Deterministic Miller-Rabin for 64-bit integers
+bool isPrime(uint64_t n) {
+    if (n < 2) return false;
+    static uint64_t testPrimes[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+    
+    for (uint64_t p : testPrimes) {
+        if (n % p == 0) return n == p;
+    }
+
+    uint64_t d = n - 1;
+    while ((d & 1) == 0) d >>= 1;
+
+    for (uint64_t a : testPrimes) {
+        if (a >= n) break;
+        if (!millerTest(d, n, a)) return false;
+    }
+    return true;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    uint64_t n;
+    cout << "Enter a number: ";
+    cin >> n;
+
+    if (isPrime(n))
+        cout << n << " is prime.\n";
+    else
+        cout << n << " is not prime.\n";
+
+    return 0;
+}
+
+
+✅ Key Points:
+
+Works for numbers up to 2^64 ≈ 1.84 × 10^19.
+
+Uses deterministic bases → no probability of error.
+
+Uses __uint128_t for safe multiplication.
+
+Efficient and suitable for competitive programming and research problems.
