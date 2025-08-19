@@ -1,0 +1,64 @@
+Wheel factorization¶
+This is an optimization of the trial division. Once we know that the number is not divisible by 2, we don't need to check other even numbers. This leaves us with only  
+50%  of the numbers to check. After factoring out 2, and getting an odd number, we can simply start with 3 and only count other odd numbers.
+# code - 
+vector<long long> trial_division2(long long n) {
+    vector<long long> factorization;
+    while (n % 2 == 0) {
+        factorization.push_back(2);
+        n /= 2;
+    }
+    for (long long d = 3; d * d <= n; d += 2) {
+        while (n % d == 0) {
+            factorization.push_back(d);
+            n /= d;
+        }
+    }
+    if (n > 1)
+        factorization.push_back(n);
+    return factorization;
+}
+
+# Fermat's factorization method
+We can write an odd composite numbern = pxq as the difference of two squares n = a^2 - b^2:
+
+# code - 
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int fermatFactor(int n) {
+    int a = ceil(sqrt(n));   // Start with ceiling of sqrt(n)
+    int b2 = a * a - n;
+    int b = round(sqrt(b2));
+
+    // Keep trying until b*b = a*a - n
+    while (b * b != b2) {
+        a++;
+        b2 = a * a - n;
+        b = round(sqrt(b2));
+    }
+
+    // Found factors: n = (a - b)(a + b)
+    int factor1 = a - b;
+    int factor2 = a + b;
+
+    cout << "Factors of " << n << " are: " << factor1 << " and " << factor2 << endl;
+
+    return factor1;  // (returning one just to match your function signature)
+}
+
+int main() {
+    int n;
+    cout << "Enter an odd composite number: ";
+    cin >> n;
+
+    if (n % 2 == 0) {
+        cout << "Please enter an odd number (Fermat works best for odd composites)." << endl;
+        return 0;
+    }
+
+    fermatFactor(n);
+
+    return 0;
+}
