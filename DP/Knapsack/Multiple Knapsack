@@ -1,0 +1,39 @@
+# Multiple Knapsack - Binary optimization 
+# code - 
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n, W;
+    cin >> n >> W; // number of items, capacity
+
+    vector<int> weights, values;
+
+    for (int i = 0; i < n; i++) {
+        int w, v, k;
+        cin >> w >> v >> k; // weight, value, count of item
+
+        // binary optimization: split into sums of powers of 2
+        for (int j = 1; j <= k; j <<= 1) {
+            weights.push_back(w * j);
+            values.push_back(v * j);
+            k -= j;
+        }
+        if (k > 0) {
+            weights.push_back(w * k);
+            values.push_back(v * k);
+        }
+    }
+
+    vector<int> f(W + 1, 0);
+
+    // Now it's just standard 0/1 knapsack
+    for (int i = 0; i < (int)weights.size(); i++) {
+        for (int j = W; j >= weights[i]; j--) {
+            f[j] = max(f[j], f[j - weights[i]] + values[i]);
+        }
+    }
+
+    cout << f[W] << endl;
+    return 0;
+}
