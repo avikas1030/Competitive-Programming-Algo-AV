@@ -28,7 +28,7 @@ int main() {
     vector<int> f(W + 1, 0);
 
     // Now it's just standard 0/1 knapsack
-    for (int i = 0; i < (int)weights.size(); i++) {
+    for (int i = 1; i <= (int)weights.size(); i++) {
         for (int j = W; j >= weights[i]; j--) {
             f[j] = max(f[j], f[j - weights[i]] + values[i]);
         }
