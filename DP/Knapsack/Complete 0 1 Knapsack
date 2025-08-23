@@ -1,0 +1,29 @@
+Complete Knapsack - 
+The complete knapsack model is similar to the 0-1 knapsack, the only difference from the 0-1 knapsack is that an item can be selected an unlimited number of times 
+instead of only once.
+
+# code - 
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n, W;
+    cin >> n >> W;  // n = number of items, W = capacity of knapsack
+
+    vector<int> w(n + 1), v(n + 1);
+    for (int i = 1; i <= n; i++) {
+        cin >> w[i] >> v[i]; // weight and value of each item
+    }
+
+    vector<int> f(W + 1, 0);
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = w[i]; j <= W; j++) {
+            f[j] = max(f[j], f[j - w[i]] + v[i]);
+        }
+    }
+
+    cout << f[W] << endl; // maximum value we can take
+
+    return 0;
+}
