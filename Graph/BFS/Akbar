@@ -1,0 +1,76 @@
+# Problem link - https://www.spoj.com/problems/AKBAR/
+# code - 
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int city, dist, soldier;
+};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int T;
+    cin >> T;
+    while (T--) {
+        int N, R, M;
+        cin >> N >> R >> M;
+
+        vector<vector<int>> adj(N + 1);
+        for (int i = 0; i < R; i++) {
+            int u, v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        vector<int> base(M), strength(M);
+        for (int i = 0; i < M; i++) {
+            cin >> base[i] >> strength[i];
+        }
+
+        // BFS setup
+        vector<int> visited(N + 1, -1);   // which soldier covers
+        vector<int> dist(N + 1, -1);      // distance from soldier
+        queue<Node> q;
+
+        for (int i = 0; i < M; i++) {
+            q.push({base[i], 0, i});
+            visited[base[i]] = i;
+            dist[base[i]] = 0;
+        }
+
+        bool ok = true;
+
+        while (!q.empty() && ok) {
+            auto [u, d, s] = q.front();
+            q.pop();
+
+            if (d == strength[s]) continue;
+
+            for (int v : adj[u]) {
+                if (visited[v] == -1) {
+                    visited[v] = s;
+                    dist[v] = d + 1;
+                    q.push({v, d + 1, s});
+                } else if (visited[v] != s) {
+                    // Another soldier already covers this city
+                    ok = false;
+                    break;
+                }
+            }
+        }
+
+        // Check if all cities covered
+        for (int i = 1; i <= N; i++) {
+            if (visited[i] == -1) {
+                ok = false;
+                break;
+            }
+        }
+
+        cout << (ok ? "Yes" : "No") << "\n";
+    }
+    return 0;
+}
