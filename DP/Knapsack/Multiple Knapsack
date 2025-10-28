@@ -37,3 +37,52 @@ int main() {
     cout << f[W] << endl;
     return 0;
 }
+
+
+# explaination - 
+Binary split algorithm (quick)
+
+Start j = 1. While j <= k: take j, do k -= j, then j <<= 1. After loop, if k > 0 take the remaining k. The taken values are the binary-split parts.
+
+For k = 15
+
+j=1 → take 1, remaining k = 14
+
+j=2 → take 2, remaining k = 12
+
+j=4 → take 4, remaining k = 8
+
+j=8 → take 8, remaining k = 0
+
+Done.
+Parts: 1, 2, 4, 8 (they sum to 15).
+Why useful: any number from 0..15 can be formed by choosing a subset (binary representation).
+Example: to take 13 copies → pick 8 + 4 + 1 (parts 8,4,1).
+
+For k = 18
+
+j=1 → take 1, remaining k = 17
+
+j=2 → take 2, remaining k = 15
+
+j=4 → take 4, remaining k = 11
+
+j=8 → take 8, remaining k = 3
+
+j=16 > remaining k, stop loop; remaining k = 3 → take 3
+Parts: 1, 2, 4, 8, 3 (they sum to 18).
+Example: to take 17 copies → pick 8 + 4 + 3 + 2 = 17.
+
+Mapping to knapsack items
+
+If an original item has weight w and value v, each part p becomes a 0/1 item with:
+
+weight = w * p
+
+value = v * p
+
+Example: w = 2, v = 5, k = 18 → parts 1,2,4,8,3 produce items:
+
+(2, 5), (4, 10), (8, 20), (16, 40), (6, 15)
+
+Using these 0/1 items you can compose any number of copies from 0..18 by selecting the right subset; total number of items created is O(log k) (here 5 items), which is much smaller than creating 18 individual copies.
